@@ -1,46 +1,39 @@
-// @ts-ignore
-import memoize from "memoizee";
+type Character = " " | "*";
 
-type Space = " ";
-
-type Star = "*";
-
-type Character = Space | Star;
-
-type ArrayOfCharacter<T extends Character> = T[];
-
-type Row = [...ArrayOfCharacter<Space>, ...ArrayOfCharacter<Star>, ...ArrayOfCharacter<Space>];
-
-type Diamond = Row[];
-
-export const print = (diamond: Diamond): string => {
-  return diamond.map(printRow).join("\n");
-};
-
-const printRow = (row: Row): string => {
-  return row.join("");
-};
-
-export const diamond = (dimension: number): Diamond => {
-  const memoizedBuildRow = memoize(buildRow(dimension));
-  return [...Array(dimension)].map((_, index) => memoizedBuildRow(computeTopHalfEquivalentIndex(dimension)(index)));
-};
-
-export const buildRow = (dimension: number) => (index: number): Row => {
-  const numberOfStars = 1 + 2 * index;
-  const numberOfSpacesOnEachSide = (dimension - numberOfStars) / 2;
-  const stars = buildArrayOf<Star>(numberOfStars, "*");
-  const spaces = buildArrayOf<Space>(numberOfSpacesOnEachSide, " ");
-  return [...spaces, ...stars, ...spaces];
-};
-
-const buildArrayOf = <C extends Character>(length: number, character: C): ArrayOfCharacter<C> => {
-  return Array(length).fill(character);
-};
-
-export const computeTopHalfEquivalentIndex = (dimension: number) => (index: number): number => {
-  if (index > (dimension - 1) / 2) {
-    return dimension - 1 - index;
+const nCharactersToString = (n: number, char: Character) => {
+  let string = "";
+  for (let i = 0; i < n; i++) {
+    string += char;
   }
-  return index;
+  return string;
+};
+const drawLine = (n: number, lignIndex: number) =>
+  `${nCharactersToString(Math.abs(lignIndex), " ")}${nCharactersToString(
+    n - Math.abs(lignIndex) * 2,
+    "*"
+  )}${nCharactersToString(Math.abs(lignIndex), " ")}`;
+
+const isPositiveIndexCorrect = (n: number, lignIndex: number) => lignIndex >= 0 && lignIndex < Math.floor(n / 2);
+const isNegativeIndexCorrect = (n: number, lignIndex: number) => lignIndex <= 0 && lignIndex > -Math.floor(n / 2);
+
+// Index : 3  |   *   |
+// Index : 2  |  ***  |
+// Index : 1  | ***** |
+// Index : 0  |*******|
+// Index : -1 | ***** |
+// Index : -2 |  ***  |
+// Index : -3 |   *   |
+
+export const diamond = (n: number, lignIndex: number = 0) => {
+  const result: string[] = [];
+
+  // draw the superiors lines
+  if (isPositiveIndexCorrect(n, lignIndex)) result.push(diamond(n, lignIndex + 1));
+
+  //draw the line
+  result.push(drawLine(n, lignIndex));
+
+  //draw the inferiors lines
+  if (isNegativeIndexCorrect(n, lignIndex)) result.push(diamond(n, lignIndex - 1));
+  return result.join("\n");
 };
