@@ -7,14 +7,14 @@ const nCharactersToString = (n: number, char: Character) => {
   }
   return string;
 };
-const drawLine = (n: number, lignIndex: number) =>
-  `${nCharactersToString(Math.abs(lignIndex), " ")}${nCharactersToString(
-    n - Math.abs(lignIndex) * 2,
+const drawLine = (n: number, index: number) =>
+  `${nCharactersToString(Math.abs(index), " ")}${nCharactersToString(
+    n - Math.abs(index) * 2,
     "*"
-  )}${nCharactersToString(Math.abs(lignIndex), " ")}`;
+  )}${nCharactersToString(Math.abs(index), " ")}`;
 
-const isPositiveIndexCorrect = (n: number, lignIndex: number) => lignIndex >= 0 && lignIndex < Math.floor(n / 2);
-const isNegativeIndexCorrect = (n: number, lignIndex: number) => lignIndex <= 0 && lignIndex > -Math.floor(n / 2);
+const isPositiveIndexCorrect = (n: number, index: number) => index >= 0 && index < Math.floor(n / 2);
+const isNegativeIndexCorrect = (n: number, index: number) => index <= 0 && index > -Math.floor(n / 2);
 
 // Index : 3  |   *   |
 // Index : 2  |  ***  |
@@ -24,16 +24,16 @@ const isNegativeIndexCorrect = (n: number, lignIndex: number) => lignIndex <= 0 
 // Index : -2 |  ***  |
 // Index : -3 |   *   |
 
-export const diamond = (n: number, lignIndex: number = 0) => {
+export const diamond = (n: number, index: number = 0) => {
   const result: string[] = [];
 
   // draw the superiors lines
-  if (isPositiveIndexCorrect(n, lignIndex)) result.push(diamond(n, lignIndex + 1));
+  if (isPositiveIndexCorrect(n, index)) result.push(diamond(n, index + 1));
 
   //draw the line
-  result.push(drawLine(n, lignIndex));
+  result.push(drawLine(n, index));
 
   //draw the inferiors lines
-  if (isNegativeIndexCorrect(n, lignIndex)) result.push(diamond(n, lignIndex - 1));
+  if (isNegativeIndexCorrect(n, index)) result.push(diamond(n, index - 1));
   return result.join("\n");
 };
